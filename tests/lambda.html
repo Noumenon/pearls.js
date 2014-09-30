@@ -1,0 +1,78 @@
+<!DOCTYPE>
+<html>
+  <head>       
+    <meta http-equiv="content-type" content="text/html; charset=windows-1250">       
+      <script type="text/javascript" src="//code.jquery.com/qunit/qunit-1.15.0.js"></script>
+      <script type="text/javascript">
+          //"use strict"
+
+          // pearlaliases is an object that pearls.js uses to handle name collisions
+          // if pearls functions interfere with other libraries, create a pearlaliases object with
+          // orgname:newname members and the functions will use the new names
+          //var pearlaliases = {lambda: "lamb"};
+          </script>
+    <script type="text/javascript" src="../function.js"></script>
+    <link rel="stylesheet" type="text/css" href="//code.jquery.com/qunit/qunit-1.15.0.css" />
+    <title>    
+    </title>
+      <script type="text/javascript" src="../require.js"></script>
+  </head>     
+  <body>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+    <script type="text/javascript">
+        //"use strict"
+
+        console.log("Global Test");
+
+        function test( assert, ns )
+        {
+            ns = ns || (0, eval)('this');
+
+            var f = ns.lambda("(a1,b2,c3,d4) => a1*b2*c3*d4");
+            var g = ns.lambda("( n ) => n % 2 == 0");
+            var h = ns.lambda(" n => n % 2 == 0");
+            var i = ns.lambda(" n => { return n % 2 == 0 } ");
+            var j = ns.lambda(" n => return n % 2 == 0 ");
+            var k = ns.lambda("(n)=>{return n % 2 == 0}");
+            var ff = ns.lambda("n => m => m * n");
+
+            assert.notEqual(f, null, "Unexpected parse error for f");
+            assert.notEqual(g, null, "Unexpected parse error for g");
+            assert.notEqual(h, null, "Unexpected parse error for h");
+            assert.notEqual(i, null, "Unexpected parse error for i");
+            assert.notEqual(j, null, "Unexpected parse error for j");
+            assert.notEqual(k, null, "Unexpected parse error for k");
+            assert.notEqual(ff, null, "Unexpected parse error for ff");
+
+            assert.equal(f(1, 2, 3, 4), 24, "Expected the f function to return 24");
+
+            var fff = ff(3);
+
+            assert.equal(typeof fff, "function", "Expected the ff function to return a function");
+
+            // test closure
+            assert.equal(fff(4), 12, "Expected the fff function to return 12");
+        }
+
+        QUnit.test( "lambda test", test);
+
+        console.log("AMD Test");
+
+        requirejs(['function'],
+                function(f)
+                {
+                    var t = (function()
+                    {
+                        return function (assert)
+                        {
+                            return test(assert, f);
+                        }
+                    })();
+
+                    QUnit.test( "AMD lambda test", t);
+                });
+
+    </script>
+  </body>
+</html>
